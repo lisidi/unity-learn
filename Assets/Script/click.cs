@@ -20,6 +20,6 @@ public class click : MonoBehaviour
     public void buttonClick()
     {
         Debug.Log("点击了");
-        EditorSceneManager.LoadScene("detail");
-    }
+        UnityEngine.SceneManagement.SceneManager.LoadScene("detail");
+   }
 }
