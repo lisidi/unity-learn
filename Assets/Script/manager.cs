@@ -17,8 +17,13 @@ public class manager : MonoBehaviour
 		Debug.Log(name);
 		switch (name)
 		{
-			case "Text":
+			case "UGUI":
 				Debug.Log("Text1");
+				UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+				break;
+			case "Login":
+				Debug.Log("Text1");
+				UnityEngine.SceneManagement.SceneManager.LoadScene(1);
 				break;
 			case "Image":
 				Debug.Log("Image1");
