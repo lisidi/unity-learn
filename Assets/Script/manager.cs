@@ -1,21 +1,24 @@
-﻿    using UnityEngine;
-    using UnityEngine.UI;
-    using System;
-    using System.Collections.Generic;
-    using TMPro;
-    using BestHTTP;
-    using System.Text;
-    using Newtonsoft.Json;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
+using TMPro;
+using BestHTTP;
+using System.Text;
+using Newtonsoft.Json;
+using UnityEngine.Networking;
 
-    public class manager : MonoBehaviour {
 
-        void Start() {
+public class manager : MonoBehaviour {
+
+	    void Start() {
 	        Button btn = this.GetComponent<Button>();
 	        btn.onClick.AddListener(delegate {
 		        OnClick(btn.name);
 	        });
-        }
+	    }
 
+        
         void OnRequestFinished(HTTPRequest request, HTTPResponse response) {
  　　         Debug.Log(response);
             if (response.StatusCode == 200) {
@@ -28,6 +31,8 @@
                 }
 	        }
         }
+
+
 
 	    private void OnClick(string name) {
 		    switch (name) {
@@ -73,11 +78,24 @@
 					    request.Send();
 				    }
 				    break;
-			    default:
+			    case "DownloadButton":
+    				var urlString = "https://img04.sogoucdn.com/app/a/100520076/a5ec7bf55c2e54146b92abf35e1b7503";
+	    			this.DownloadImage(urlString);
+				    break;
+				default:
 				    Debug.Log("点击");
 				    break;
 		    }
 
+	    }
+
+	    void DownloadImage(string urlString) {
+		    new HTTPRequest(new Uri(urlString), (request, response) => {
+			    var tex = new Texture2D(0, 0);
+			    tex.LoadImage(response.Data);
+			    RawImage loadImage = GameObject.Find("loadImage").GetComponent<RawImage>();
+			    loadImage.texture = tex;
+		    }).Send();
 	    }
 
 
