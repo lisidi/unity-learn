@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Json", 
+        "age": 20, 
+        "Skill": "noting"
+    }, 
+    {
+        "name": "Haria", 
+        "age": 24, 
+        "Skill": "jump"
+    }, 
+    {
+        "name": "Jsfg", 
+        "age": 42, 
+        "Skill": "attack"
+    }
+]
