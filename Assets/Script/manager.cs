@@ -82,8 +82,6 @@ public class manager : MonoBehaviour
 
     private void OnClick(string name)
     {
-        TMP_InputField accountInputFiled = GameObject.Find("TextMeshPro - InputField - account").GetComponent<TMP_InputField>();
-        TMP_InputField passwordInputFiled = GameObject.Find("TextMeshPro - InputField - password").GetComponent<TMP_InputField>();
         switch (name)
         {
             case "UGUI":
@@ -111,28 +109,31 @@ public class manager : MonoBehaviour
                 UnityEngine.SceneManagement.SceneManager.LoadScene(3);
                 break;
             case "LoginButton":
+                TMP_InputField accountInputFiled = GameObject.Find("TextMeshPro - InputField - account").GetComponent<TMP_InputField>();
+                TMP_InputField passwordInputFiled = GameObject.Find("TextMeshPro - InputField - password").GetComponent<TMP_InputField>();
                 Login(accountInputFiled.text, passwordInputFiled.text);
                 Debug.Log("LoginButton");
                 break;
             case "httpLoginButton":
-                Debug.Log("httpLoginButton");
-
-                if (accountInputFiled.text.Length == 0 || passwordInputFiled.text.Length == 0)
-                {
-                    SSTools.ShowMessage("账号或密码为空", SSTools.Position.bottom, SSTools.Time.threeSecond);
-                }
-                else
-                {
-                    HTTPRequest request = new HTTPRequest(new Uri("https://www.yibbuda.com/admin/auth/login"), HTTPMethods.Post, OnRequestFinished);
-                    Dictionary<string, string> requestParamsDic = new Dictionary<string, string>();
-                    requestParamsDic.Add("username", accountInputFiled.text);
-                    requestParamsDic.Add("password", passwordInputFiled.text);
-                    string requestParamsString = JsonConvert.SerializeObject(requestParamsDic);
-                    request.RawData = Encoding.UTF8.GetBytes(requestParamsString);
-                    request.AddHeader("Accept", "application/json");
-                    request.AddHeader("Content-Type", "application/json;charset=UTF-8");
-                    request.Send();
-                }
+                //Debug.Log("httpLoginButton");
+                //TMP_InputField accountInputFiled = GameObject.Find("TextMeshPro - InputField - account").GetComponent<TMP_InputField>();
+                //TMP_InputField passwordInputFiled = GameObject.Find("TextMeshPro - InputField - password").GetComponent<TMP_InputField>();
+                //if (accountInputFiled.text.Length == 0 || passwordInputFiled.text.Length == 0)
+                //{
+                //    SSTools.ShowMessage("账号或密码为空", SSTools.Position.bottom, SSTools.Time.threeSecond);
+                //}
+                //else
+                //{
+                //    HTTPRequest request = new HTTPRequest(new Uri("https://www.yibbuda.com/admin/auth/login"), HTTPMethods.Post, OnRequestFinished);
+                //    Dictionary<string, string> requestParamsDic = new Dictionary<string, string>();
+                //    requestParamsDic.Add("username", accountInputFiled.text);
+                //    requestParamsDic.Add("password", passwordInputFiled.text);
+                //    string requestParamsString = JsonConvert.SerializeObject(requestParamsDic);
+                //    request.RawData = Encoding.UTF8.GetBytes(requestParamsString);
+                //    request.AddHeader("Accept", "application/json");
+                //    request.AddHeader("Content-Type", "application/json;charset=UTF-8");
+                //    request.Send();
+                //}
                 break;
             case "DownloadButton":
                 var urlString = "https://img04.sogoucdn.com/app/a/100520076/a5ec7bf55c2e54146b92abf35e1b7503";
