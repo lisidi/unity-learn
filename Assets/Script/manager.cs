@@ -4,30 +4,19 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using BestHTTP;
-using System.Text;
-using Newtonsoft.Json;
-using System.IO;
 using LitJson;
+//using System.Text;
+//using Newtonsoft.Json;
+//using System.IO;
+
 
 public class User
 {
-    public string userId
-    {
-        get;
-        set;
-    }
+    public string userId { get; set; }
 
-    public string userName
-    {
-        get;
-        set;
-    }
+    public string userName { get; set; }
 
-    public string userPassword
-    {
-        get;
-        set;
-    }
+    public string userPassword { get; set; }
 }
 
 public class LoginRes
@@ -36,52 +25,26 @@ public class LoginRes
     public List<User> userList { get; set; }
 }
 
-public class Person
-{
-    public string name { get; set; }
-    public int age { get; set; }
-
-}
-
-public class manager : MonoBehaviour
+public class Manager : MonoBehaviour
 {
 
     void Start()
     {
         Button btn = this.GetComponent<Button>();
-        btn.onClick.AddListener(delegate
+        if (btn != null)
         {
-            OnClick(btn.name);
-        });
-    }
-
-
-    void OnRequestFinished(HTTPRequest request, HTTPResponse response)
-    {
-        Debug.Log(response);
-        if (response.StatusCode == 200)
-        {
-            Dictionary<string, object> values = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.DataAsText);
-            var errno = values["errno"];
-            if (Convert.ToInt32(errno) == 0)
+            btn.onClick.AddListener(delegate
             {
-                SSTools.ShowMessage("登录成功", SSTools.Position.bottom, SSTools.Time.threeSecond);
-            }
-            else
-            {
-                SSTools.ShowMessage("登录失败", SSTools.Position.bottom, SSTools.Time.threeSecond);
-            }
+                OnClick(btn.name);
+            });
         }
-        else
-        {
-            SSTools.ShowMessage("登录失败", SSTools.Position.bottom, SSTools.Time.threeSecond);
-        }
-    }
 
+    }
 
 
     private void OnClick(string name)
     {
+        SSTools.ShowMessage(name, SSTools.Position.bottom, SSTools.Time.twoSecond);
         switch (name)
         {
             case "UGUI":
@@ -93,74 +56,46 @@ public class manager : MonoBehaviour
             case "Back":
                 UnityEngine.SceneManagement.SceneManager.LoadScene(0);
                 break;
-            case "Raw Image":
-                break;
-            case "Button":
-                break;
-            case "Input Field":
-                break;
-            case "Toggle":
-                break;
-            case "Slider":
-                break;
-            case "Dropdown":
-                break;
             case "ImageLoad":
                 UnityEngine.SceneManagement.SceneManager.LoadScene(3);
                 break;
             case "LoginButton":
-                TMP_InputField accountInputFiled = GameObject.Find("TextMeshPro - InputField - account").GetComponent<TMP_InputField>();
-                TMP_InputField passwordInputFiled = GameObject.Find("TextMeshPro - InputField - password").GetComponent<TMP_InputField>();
-                Login(accountInputFiled.text, passwordInputFiled.text);
-                Debug.Log("LoginButton");
-                break;
-            case "httpLoginButton":
-                //Debug.Log("httpLoginButton");
-                //TMP_InputField accountInputFiled = GameObject.Find("TextMeshPro - InputField - account").GetComponent<TMP_InputField>();
-                //TMP_InputField passwordInputFiled = GameObject.Find("TextMeshPro - InputField - password").GetComponent<TMP_InputField>();
-                //if (accountInputFiled.text.Length == 0 || passwordInputFiled.text.Length == 0)
-                //{
-                //    SSTools.ShowMessage("账号或密码为空", SSTools.Position.bottom, SSTools.Time.threeSecond);
-                //}
-                //else
-                //{
-                //    HTTPRequest request = new HTTPRequest(new Uri("https://www.yibbuda.com/admin/auth/login"), HTTPMethods.Post, OnRequestFinished);
-                //    Dictionary<string, string> requestParamsDic = new Dictionary<string, string>();
-                //    requestParamsDic.Add("username", accountInputFiled.text);
-                //    requestParamsDic.Add("password", passwordInputFiled.text);
-                //    string requestParamsString = JsonConvert.SerializeObject(requestParamsDic);
-                //    request.RawData = Encoding.UTF8.GetBytes(requestParamsString);
-                //    request.AddHeader("Accept", "application/json");
-                //    request.AddHeader("Content-Type", "application/json;charset=UTF-8");
-                //    request.Send();
-                //}
+                Login();
                 break;
             case "DownloadButton":
                 var urlString = "https://img04.sogoucdn.com/app/a/100520076/a5ec7bf55c2e54146b92abf35e1b7503";
-                this.DownloadImage(urlString);
-
+                DownloadImage(urlString);
+                break;
+            case "DetailBack":
+                UnityEngine.SceneManagement.SceneManager.LoadScene(2);
                 break;
             default:
-                Debug.Log("点击");
                 break;
         }
 
     }
 
-    void Login(string username, string password)
+    void Login()
     {
+        TMP_InputField accountInputFiled = GameObject.Find("TextMeshPro - InputField - account").GetComponent<TMP_InputField>();
+        TMP_InputField passwordInputFiled = GameObject.Find("TextMeshPro - InputField - password").GetComponent<TMP_InputField>();
+        string username = accountInputFiled.text;
+        string password = passwordInputFiled.text;
         if (username.Length == 0 || password.Length == 0)
         {
-            SSTools.ShowMessage("account or password is empty", SSTools.Position.bottom, SSTools.Time.threeSecond);
+            SSTools.ShowMessage("account or password is empty", SSTools.Position.bottom, SSTools.Time.twoSecond);
+            return;
         }
-        else
+
+        bool isUser = false;
+        try
         {
-            bool isUser = false;
-            try
+            //本地数据验证
+            string jsonString = "{ \"errno\": 0, \"userList\": [ { \"userId\": \"1\", \"userName\": \"lisd\", \"userPassword\": \"123\" }, { \"userId\": \"0\", \"userName\": \"nick\", \"userPassword\": \"321\" } ] }";
+            LoginRes response = JsonMapper.ToObject<LoginRes>(jsonString);
+            if (response != null && response.errno == 0)
             {
-                String JString = File.ReadAllText(Application.dataPath + "/Resource/user.json");
-                LoginRes response = JsonMapper.ToObject<LoginRes>(JString);
-                if (response != null && response.errno == 0)
+                if ((response.userList != null) && (response.userList.Count != 0))
                 {
                     foreach (User user in response.userList)
                     {
@@ -170,22 +105,26 @@ public class manager : MonoBehaviour
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.ToString());
-            }
-
-            if (isUser == true)
-            {
-                SSTools.ShowMessage("login successful", SSTools.Position.bottom, SSTools.Time.threeSecond);
-            }
-            else
-            {
-                SSTools.ShowMessage("login failed", SSTools.Position.bottom, SSTools.Time.threeSecond);
 
             }
         }
+        catch (Exception e)
+        {
+            throw new Exception(e.ToString());
+        }
+
+
+        if (isUser == true)
+        {
+            SSTools.ShowMessage("login successful", SSTools.Position.bottom, SSTools.Time.twoSecond);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(4);
+        }
+        else
+        {
+            SSTools.ShowMessage("login failed", SSTools.Position.bottom, SSTools.Time.twoSecond);
+
+        }
+
     }
 
 
@@ -199,6 +138,5 @@ public class manager : MonoBehaviour
             loadImage.texture = tex;
         }).Send();
     }
-
 
 }
