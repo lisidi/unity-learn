@@ -25,7 +25,7 @@ public class LoginRes
     public List<User> userList { get; set; }
 }
 
-public class Manager : MonoBehaviour
+public class manager : MonoBehaviour
 {
 
     void Start()
